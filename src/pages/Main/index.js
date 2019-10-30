@@ -40,25 +40,26 @@ export default class Main extends Component {
     }
   }
 
-  async componentDidUpdate(_, prevState) {
+  componentDidUpdate(_, prevState) {
     const { users } = this.state;
 
     if (prevState.users !== users) {
-      await AsyncStorage.setItem('users', JSON.stringify(users));
+      AsyncStorage.setItem('users', JSON.stringify(users));
     }
   }
 
-  handlerAddUser = async () => {
+  handleAddUser = async () => {
     const { users, newUser } = this.state;
 
     this.setState({ loading: true });
-    const reponse = await api.get(`/users/${newUser}`);
+
+    const response = await api.get(`/users/${newUser}`);
 
     const data = {
-      name: reponse.data.name,
-      login: reponse.data.login,
-      bio: reponse.data.bio,
-      avatar: reponse.data.avatar_url,
+      name: response.data.name,
+      login: response.data.login,
+      bio: response.data.bio,
+      avatar: response.data.avatar_url,
     };
 
     this.setState({
@@ -93,13 +94,13 @@ export default class Main extends Component {
             value={newUser}
             onChangeText={text => this.setState({ newUser: text })}
             returnKeyType="send"
-            onSubmitEditing={this.handlerAddUser}
+            onSubmitEditing={this.handleAddUser}
           />
-          <SubmitButton loading={loading} onPress={this.handlerAddUser}>
+          <SubmitButton loading={loading} onPress={this.handleAddUser}>
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#FFF" />
             ) : (
-              <Icon name="add" size={20} color="#fff" />
+              <Icon name="add" size={20} color="#FFF" />
             )}
           </SubmitButton>
         </Form>
@@ -114,7 +115,7 @@ export default class Main extends Component {
               <Bio>{item.bio}</Bio>
 
               <ProfileButton onPress={() => this.handleNavigate(item)}>
-                <ProfileButtonText> Ver perfil</ProfileButtonText>
+                <ProfileButtonText>Ver perfil</ProfileButtonText>
               </ProfileButton>
             </User>
           )}
