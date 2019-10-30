@@ -15,6 +15,7 @@ import {
   Info,
   Title,
   Author,
+  Loading,
 } from './styles';
 
 export default class User extends Component {
@@ -31,20 +32,23 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    loading: false,
   };
 
   async componentDidMount() {
+    this.setState({ loading: true });
+
     const { navigation } = this.props;
     const user = navigation.getParam('user').name;
 
     const response = await api.get(`/users/${user.login}/starred`);
 
-    this.setState({ stars: response.data });
+    this.setState({ stars: response.data, loading: false });
   }
 
   render() {
     const { navigation } = this.props;
-    const { stars } = this.state;
+    const { stars, loading } = this.state;
 
     const user = navigation.getParam('user');
     return (
@@ -54,19 +58,24 @@ export default class User extends Component {
           <Name>{user.name}</Name>
           <Bio>{user.bio}</Bio>
         </Header>
-        <Stars
-          data={stars}
-          keyExtractor={star => String(star.id)}
-          renderItem={({ item }) => (
-            <Starred onPress={() => this.handleNavigate(item)}>
-              <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-              <Info>
-                <Title>{item.name}</Title>
-                <Author>{item.owner.login}</Author>
-              </Info>
-            </Starred>
-          )}
-        />
+
+        {loading ? (
+          <Loading />
+        ) : (
+          <Stars
+            data={stars}
+            keyExtractor={star => String(star.id)}
+            renderItem={({ item }) => (
+              <Starred onPress={() => this.handleNavigate(item)}>
+                <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+                <Info>
+                  <Title>{item.name}</Title>
+                  <Author>{item.owner.login}</Author>
+                </Info>
+              </Starred>
+            )}
+          />
+        )}
       </Container>
     );
   }
