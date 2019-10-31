@@ -52,6 +52,16 @@ export const Avatar = styled.Image`
   background: #eee;
 `;
 
+export const RemoveButton = styled(RectButton)`
+  justify-content: center;
+  align-items: center;
+  background: #7159c1;
+  border-radius: 4px;
+  margin-left: 10px;
+  padding: 0 12px;
+  opacity: ${props => (props.loading ? 0.7 : 1)};
+`;
+
 export const Name = styled.Text`
   font-size: 14px;
   color: #333;

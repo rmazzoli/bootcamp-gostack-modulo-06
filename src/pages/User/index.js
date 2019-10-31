@@ -9,13 +9,13 @@ import {
   Avatar,
   Name,
   Bio,
+  Loading,
   Stars,
   Starred,
   OwnerAvatar,
   Info,
   Title,
   Author,
-  Loading,
 } from './styles';
 
 export default class User extends Component {
@@ -32,25 +32,56 @@ export default class User extends Component {
 
   state = {
     stars: [],
-    loading: false,
+    page: 1,
+    loading: true,
+    refreshing: false,
   };
 
   async componentDidMount() {
-    this.setState({ loading: true });
-
-    const { navigation } = this.props;
-    const user = navigation.getParam('user').name;
-
-    const response = await api.get(`/users/${user.login}/starred`);
-
-    this.setState({ stars: response.data, loading: false });
+    this.load();
   }
+
+  load = async (page = 1) => {
+    const { stars } = this.state;
+    const { navigation } = this.props;
+    const user = navigation.getParam('user');
+
+    const response = await api.get(`/users/${user.login}/starred`, {
+      params: { page },
+    });
+
+    this.setState({
+      stars: page >= 2 ? [...stars, ...response.data] : response.data,
+      page,
+      loading: false,
+      refreshing: false,
+    });
+  };
+
+  loadMore = () => {
+    const { page } = this.state;
+
+    const nextPage = page + 1;
+
+    this.load(nextPage);
+  };
+
+  refreshList = () => {
+    this.setState({ refreshing: true, stars: [] }, this.load);
+  };
+
+  handleNavigate = repository => {
+    const { navigation } = this.props;
+
+    navigation.navigate('Repository', { repository });
+  };
 
   render() {
     const { navigation } = this.props;
-    const { stars, loading } = this.state;
+    const { stars, loading, refreshing } = this.state;
 
     const user = navigation.getParam('user');
+
     return (
       <Container>
         <Header>
@@ -64,6 +95,10 @@ export default class User extends Component {
         ) : (
           <Stars
             data={stars}
+            onRefresh={this.refreshList}
+            refreshing={refreshing}
+            onEndReachedThreshold={0.2}
+            onEndReached={this.loadMore}
             keyExtractor={star => String(star.id)}
             renderItem={({ item }) => (
               <Starred onPress={() => this.handleNavigate(item)}>
