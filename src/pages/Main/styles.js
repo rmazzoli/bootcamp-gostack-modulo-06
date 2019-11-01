@@ -34,6 +34,15 @@ export const SubmitButton = styled(RectButton)`
   opacity: ${props => (props.loading ? 0.7 : 1)};
 `;
 
+export const RemoveButton = styled.View`
+  justify-content: center;
+  align-items: center;
+  background: #7159c1;
+  border-radius: 4px;
+  margin-left: 10px;
+  padding: 0 12px;
+`;
+
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
 })`
@@ -50,16 +59,6 @@ export const Avatar = styled.Image`
   height: 64px;
   border-radius: 32px;
   background: #eee;
-`;
-
-export const RemoveButton = styled(RectButton)`
-  justify-content: center;
-  align-items: center;
-  background: #7159c1;
-  border-radius: 4px;
-  margin-left: 10px;
-  padding: 0 12px;
-  opacity: ${props => (props.loading ? 0.7 : 1)};
 `;
 
 export const Name = styled.Text`
